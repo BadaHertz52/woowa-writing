@@ -115,6 +115,10 @@
   |Chrome DevTools Performance Panel| JavaScript 실행 시간, 리플로우, 리페인트, 네트워크 요청 시간|
   |GTmetrix| LCP, FCP, CLS, Page Load Time, Total Page Size, HTTP Requests|
 
+### webpack-bundle-analyzer
+
+Webpack을 사용 중이라면, webpack-bundle-analyzer를 사용해 번들링 된 리소스의 크기를 확인할 수 있다.
+
 ## 3. 브라우저 렌더링 과정
 
 성능 저하의 원인과 개선 방법을 이야기에 앞서, 브라우저 렌더링 과정에 대한 이해가 필요하다.
@@ -446,9 +450,118 @@ sns에서 새로운 피드를 보기 위해, 새로 고침을 했다고 가정�
 
 메모리 누수와 불필요한 객체 생성을 방지하기 위해, 이벤트 리스너나 타이머를 적절히 관리하고, 객체를 재사용하여 메모리를 효율적으로 사용할 수 있다.
 
-## <span id="optimization"> 5. 성능 최적화</span>
+## <span id="optimization"> 5. Webpack에서 성능 최적화하기</span>
 
 ### JS 최적화
+
+#### Minification(압축화)
+
+Webpack 5는 기본적으로 TerserPlugin을 사용하여 JavaScript 파일을 압축합니다. 추가적인 설정이 필요 없다면 mode: 'production'으로 설정하면 자동으로 압축이 적된다.
+
+```js
+// webpack.config.js
+module.exports = {
+  mode: "production", // 자동으로 TerserPlugin이 활성화됨
+};
+```
+
+#### 난독화
+
+난독화는 코드의 가독성을 낮추어 악의적인 사용자가 코드를 분석하거나 도용하는 것을 방지하기 위한 기법입니다. 난독화 과정에서 변수 이름이 짧아지기 때문에 번들 크기를 줄이는데 기여합니다.
+
+Webpack 5에서 기본적으로 제공하는 TerserPlugin을 사용하여 난독화를 진행 할 수 있다.
+
+```js
+// webpack.config.js
+const TerserPlugin = require("terser-webpack-plugin");
+
+module.exports = {
+  mode: "production", // 기본 압축 및 최적화 활성화
+  optimization: {
+    minimize: true, // production 모드에서 minimize의 기본값은 true
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          mangle: true, // 변수 및 함수 이름 변경 (난독화)
+          compress: {
+            drop_console: true, // 콘솔 로그 제거
+          },
+          output: {
+            comments: false, // 주석 제거
+          },
+        },
+      }),
+    ],
+  },
+};
+```
+
+#### Tree shaking (트리 쉐이킹)
+
+Tree shaking은 dead code를 제거하는 기능이다. 이를 위해서는 ES6 모듈을 사용하고 코드에서 불필요한 코드를 없애는 것이 중요하다. 기본적으로 Webpack 5는 mode: 'production'에서 Tree shaking을 활성화된다.
+
+#### Code splitting (코드 스플리팅)
+
+Code splitting은 큰 애플리케이션을 작은 청크로 나누어 필요한 부분만 로딩하는 것을 말한다. 동적 import(dynamic import)를 이용하거나 Webpack의 splitChunks 옵션을 사용하면 Code splitting을 구현할 수 있다.
+
+**동적 import(dynamic import)**
+동적 import를 적용하면 해당 페이지에 필요한 컴포넌트만 불러온다.
+
+- 리소스 비교
+  동적 import를 적용하기 전에넌 모든 페이지가 합쳐진 bundle.js를 부른다면, 적용하면 페이지에 필요한 js파일만 부른다.
+
+<p align="center">
+  <img src="./images/technicalWriting/code_spritting.jpg" loading="lazy" alt="code splitting이 적용 전과 적용 후 리소스 파일 비교" width="500" />
+</p>
+
+- 코드
+
+```js
+const Home = lazy(() => import("./pages/Home/Home"));
+const Search = lazy(() => import("./pages/Search/Search"));
+
+import NavBar from "./components/NavBar/NavBar";
+import Footer from "./components/Footer/Footer";
+
+import "./App.css";
+import { lazy, Suspense } from "react";
+import LoadingBar from "./components/LoadingBar/LoadingBar";
+
+const App = () => {
+  return (
+    <Router basename={"/"}>
+      <NavBar />
+      <Suspense fallback={<LoadingBar />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/search" element={<Search />} />
+        </Routes>
+        <Footer />
+      </Suspense>
+    </Router>
+  );
+};
+```
+
+**spliceChunks 옵션 사용**
+
+```js
+//Webpack.config.js
+module.exports = {
+  //....
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+    },
+  },
+};
+```
+
+#### 모듈 압축(Gzip, Brotli)
+
+Webpack 번들링 후 서버에서 전달할 때, 파일 크기를 더욱 줄이기 위해 Gzip 또는 Brotli 압축을 적용할 수 있다
+
+CloudFront에서는 기본적으로 Gzip을 지원하고, Brotil로 압축된 경우 Brotil이 우선 적용된다.
 
 ### CSS 최적화
 
