@@ -511,7 +511,7 @@ Code splitting은 큰 애플리케이션을 작은 청크로 나누어 필요한
   동적 import를 적용하기 전에넌 모든 페이지가 합쳐진 bundle.js를 부른다면, 적용하면 페이지에 필요한 js파일만 부른다.
 
 <p align="center">
-  <img src="./images/technicalWriting/code_spritting.jpg" loading="lazy" alt="code splitting이 적용 전과 적용 후 리소스 파일 비교" width="500" />
+  <img src="./images/technicalWriting/code_splitting.jpg" loading="lazy" alt="code splitting이 적용 전과 적용 후 리소스 파일 비교" width="\700" />
 </p>
 
 - 코드
@@ -582,9 +582,322 @@ Accept-Encoding: gzip, deflate
 
 - CloudFront에서 Brotil로 압축해 보내 응답
 <p align="center">
-  <img src="./images/technicalWriting/refresh_cdn_cache.png" alt="설명" loading="lazy"/>
+  <img src="./images/technicalWriting/refresh_cdn_cache.png" alt="CloudFront에서 Brotil로 압축해 보내 응답" loading="lazy"/>
 </p>
+
+**Webpack을 사용한 Gzip 압축**
+
+```js
+//Webpack.config.js
+
+const CompressionPlugin = require("compression-webpack-plugin");
+
+module.exports = {
+  plugins: [
+    new CompressionPlugin({
+      algorithm: "gzip",
+      test: /\.(js|css|html|svg)$/, // 압축할 파일들
+      threshold: 8192, // 최소 파일 크기 (8KB 이상일 때 압축)
+      minRatio: 0.8, // 압축 후 원본 파일과 최소 비율
+    }),
+  ],
+};
+```
+
+**Webpack을 사용한 Brotil 압축**
+
+```js
+//Webpack.config.js
+const BrotliPlugin = require("brotli-webpack-plugin");
+
+module.exports = {
+  plugins: [
+    new BrotliPlugin({
+      test: /\.(js|css|html|svg)$/,
+      threshold: 8192,
+      minRatio: 0.8,
+    }),
+  ],
+};
+```
+
+CloudFront에서 실시간으로 모듈을 압축하는 것은 S3에 압축된 파일을 올리는 것보다 속도가 느리다. 그러나 브라우저의 `Accept-Encoding`헤더에 따라 적절한 방식의 응답을 제공할 수 있어 동적 콘텐츠나 자주 변경되는 캐시를 사용하는 파일에 유리하다.
+
+따라서 정적 파일이라면 Webpack에서 미리 압축을 하고, 동적 콘텐츠라면 CloudFront의 실시간 압축을 사용하는 게 좋다. 단 **Webpack에서 압축을 한다면 서비스 지원 브라우저에서 사용하려는 압축 방식을 지원하는 지 살펴봐야한다.** 지원하는 브라우저에서 Gzip만을 지원하는데, S3에는 Brotli 압축 파일만 있다면 CloudFront는 응답을 보내지 않는다.
 
 ### CSS 최적화
 
+CSS-in-JS는 JS최적화에서 진행되기 때문에 여기서는 `.css`확장자를 사용하는 CSS 파일 기반 스타일링에 대한 최적화 방법에 대해 살펴보자.
+
+#### bundle.js에서 CSS 파일 별도 추출
+
+Webpack에서 style-loader를 사용하면 CSS는 JS가 번들링된 bundle.js에 인라인으로 포함된다.
+
+**CSS 파일을 별도로 추출해야하는 이유?**
+
+브라우저 렌더링 과정을 떠올리면, JS파일과 CSS 파일의 로딩 방식은 다르며, 각각 렌더링 과정에 끼치는 영향도 다르다. CSS와 JS가 함께 bundle.js에 묶여 있으면 bundle.js를 모두 다운로드하고 파싱하는 과정이 끝나기 전까지 렌더링이 지연될 수 있다. 반면에 CSS 파일을 별도로 추출하면, 브라우저는 CSS와 JS를 병렬적으로 다운로드해 초기 페이지 로딩 성능이 개선된다. 또한 CSS가 별도의 파일로 추출되면 CSS 파일을 빠르게 로드할 수 있기 때문에 렌더링 차단을 줄일 수 있다.
+
+CSS 파일을 bundle.js에 포함하면, JS파일이 조금만 변경되어도 전체 bundle.js가 다시 다운로드된다. 반면 CSS 파일을 따로 추출하면 CSS나 JS 중 하나가 변경되어도 각각의 파일만 새로 캐싱하여 다운로드할 수 있다. 이는 캐싱 효율성을 높여 성능 개선에도 도움이 된다.
+
+| 비교 항목                        | CSS가 JS와 함께 있을 때 (bundle.js)                       | CSS가 별도로 있을 때                                  |
+| -------------------------------- | --------------------------------------------------------- | ----------------------------------------------------- |
+| **로딩 방식**                    | JS와 함께 다운로드되며, JS 파싱이 끝날 때까지 렌더링 지연 | CSS와 JS가 병렬로 다운로드되어 빠른 렌더링 가능       |
+| **렌더링 차단**                  | JS 파싱이 끝날 때까지 CSS 적용이 지연됨                   | CSS가 빠르게 로드되어 렌더링 차단을 줄일 수 있음      |
+| **병렬 다운로드**                | 병렬 다운로드 불가능, JS 파싱 후 CSS 적용                 | CSS와 JS가 병렬로 다운로드되어 초기 로딩 성능 개선    |
+| **캐싱 효율성**                  | JS가 변경되면 CSS도 함께 다시 다운로드                    | CSS나 JS 중 하나만 변경되면 해당 파일만 다시 다운로드 |
+| **코드 스플리팅**                | 어려움                                                    | 페이지별로 필요한 CSS만 로드 가능                     |
+| **성능 측정 지표 (LCP, TTI 등)** | LCP 및 TTI 저하 가능성 있음                               | LCP 및 TTI 개선 가능                                  |
+| **렌더링 속도**                  | 느림                                                      | 빠름                                                  |
+
+** 별도 추출 방법**
+`MiniCssExtractPlugin`을 사용하여 CSS를 별도의 파일로 추출할 수 있다.
+
+```js
+// Webpack.config.js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
+    ],
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].[contenthash].css", // 캐싱을 위해 contenthash 사용
+    }),
+  ],
+};
+```
+
+#### CSS 파일 압축 및 중복 CSS 제거하기
+
+`css-minimizer-webpack-plugin`을 사용하여 CSS 파일을 압축할 수 있다.
+`purgecss-webpack-plugin`을 사용하여 사용하지 않는 CSS를 제거할 수 있다.
+
+CSS 파일을 압축하거나 중복 CSS를 제거하면 CSS 파일 크기가 줄어서 로딩 속도가 빨라딘다.
+
+```js
+// Webpack.config.js
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const PurgeCSSPlugin = require("purgecss-webpack-plugin");
+const glob = require("glob-all");
+const path = require("path");
+
+module.exports = {
+  //....
+  plugins: [
+    new PurgeCSSPlugin({
+      paths: glob.sync([
+        path.join(__dirname, "src/**/*.js"),
+        path.join(__dirname, "public/index.html"),
+      ]),
+    }),
+  ],
+  //....
+  optimization: {
+    minimize: true,
+    minimizer: [
+      `...`, // 기본적으로 제공되는 minimizer 설정을 확장
+      new CssMinimizerPlugin(),
+    ],
+  },
+};
+```
+
 ### 이미지 최적화
+
+#### 이미지 포맷 및 압축
+
+**변경할 이미지 포맷 선정하기**
+이미지 포맷 중 파일 크기가 작은 포맷들은 WebP, AVIF, 그리고 JPEG이다.
+
+| 이미지 포맷 | 파일 크기 | 장점                                                                            | 단점                                                            | 지원 수준                                               |
+| ----------- | --------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------- |
+| **AVIF**    | 가장 작음 | - 매우 높은 압축률로 파일 크기 작음 <br> - 고품질 이미지 유지 <br> - HDR 지원   | - 인코딩 속도가 느림 <br> - 지원 브라우저 및 도구가 아직 제한적 | 최신 브라우저 일부 (Chrome, Firefox 등)                 |
+| **WebP**    | 작음      | - JPEG보다 25~34% 더 작은 파일 크기 <br> - 투명도 및 애니메이션 지원            | - 일부 오래된 브라우저에서 지원 부족                            | 최신 브라우저 대부분 (Chrome, Firefox, Edge, Safari 등) |
+| **JPEG**    | 중간      | - 널리 사용됨 <br> - 모든 브라우저에서 지원 <br> - 손실 압축으로 크기 조정 가능 | - 무손실 압축 미지원 <br> - WebP 및 AVIF보다 파일 크기 큼       | 모든 브라우저 및 기기에서 지원                          |
+| **PNG**     | 큼        | - 무손실 압축 <br> - 투명도 지원                                                | - 파일 크기가 큼 <br> - 손실 압축 미지원                        | 모든 브라우저 및 기기에서 지원                          |
+| **GIF**     | 중간~큼   | - 애니메이션 지원 <br> - 간단한 이미지에 적합                                   | - 색상 제한(256색) <br> - 큰 파일 크기                          | 모든 브라우저 및 기기에서 지원                          |
+
+이미지 파일 크기는 `AVIF < WebP < JPEG < PNG`순으로 크다. AVIF는 이미지 파일 크기가 가장 작지만,아직 지원하는 브라우저와 툴이 제한적이다. 그래서 무손실 압축이며 gif도 지원하고 대부분의 최신 브라우저가 지원하는 Webp가 좋은 대안이다.
+단, Webp를 지원하지 않은 브라우저가 있기 때문에 `picture`태그나 `img`태그와 srcSect 조합과 함께 모든 브라우저에서 사용하는 JPEG를 같이 사용하는 것을 권한다.
+
+<p align="center">
+  <img src="./images/technicalWriting/image_format.png" alt="이미지 형식 비교" />
+</p>
+
+**이미지 포맷 및 압축하기**
+[`ImageMinimizerPlugin`](https://webpack.js.org/plugins/image-minimizer-webpack-plugin/)을 사용하면 이미지 파일을 크기가 작은 포맷으로 바꾸고 이미지 파일을 압축할 수 있다.
+
+압축률은 `quality`옵션을 통해 결정된다. 압축률이 커질 수록 이미지 파일 크기는 줄지만 그 만큼 이미지의 해상도는 낮아지기 때문에, 무작정 높은 압축률은 피해야한다. 이미지 파일의 쓰임에 따라 그에 맞는 압축률을 선정해야한다.
+
+- 디테일이 중요한 이미지 : 80~85
+- 단순한 색상과 선으로 구성된 이미지 : 75~80
+- 일반적으로 많이 사용되는 압축률 : 75-85
+
+```js
+//Webpack.config.js
+module.exports = {
+  //...
+  optimization: {
+    minimize: true,
+    minimizer: [
+      //...
+      new ImageMinimizerPlugin({
+        generator: [
+          {
+            //'?as=webp'를 넣어서, 해당 파일을 webp로 변경
+            preset: "webp",
+            implementation: ImageMinimizerPlugin.sharpGenerate,
+            options: {
+              encodeOptions: {
+                webp: {
+                  quality: 70,
+                },
+              },
+            },
+          },
+          {
+            //'?as=jpeg'를 넣어서, 해당 파일을 jpeg로 변경
+            preset: "jpeg",
+            implementation: ImageMinimizerPlugin.sharpGenerate,
+            options: {
+              encodeOptions: {
+                jpeg: {
+                  quality: 70,
+                },
+              },
+            },
+          },
+        ],
+        minimizer: {
+          implementation: ImageMinimizerPlugin.sharpMinify,
+          options: {
+            encodeOptions: {
+              webp: { quality: 70 },
+              jpeg: { quality: 70 },
+              gift: { quality: 70 },
+            },
+          },
+        },
+      }),
+    ],
+  },
+};
+```
+
+- picture 태그 사용 예시
+
+```jsx
+//App.jsx
+import webpImg from "./file.jpg?as=webp";
+import jpegImg from "./file.jpg?as=jpeg";
+
+//...
+const App = () => {
+  return (
+    <div>
+      <picture>
+        {/* WebP 포맷이 지원되는 브라우저에서 이 이미지를 로드 */}
+        <source srcSet={webpImg} type="image/webp" />
+        {/* WebP 포맷이 지원되지 않으면 JPEG 이미지를 로드 */}
+        <img src={jpegImg} alt="Sample" />
+      </picture>
+    </div>
+  );
+};
+```
+
+- image 태그와 srcSet조합 사용 예시
+
+```jsx
+import webpImg from "./file.jpg?as=webp"; // WebP 이미지
+import jpegImg from "./file.jpg?as=jpeg"; // JPEG 이미지
+
+const App = () => {
+  return (
+    <div>
+      <img
+        src={jpegImg} // 기본 이미지 폴백(JPEG)
+        srcSet={`${webpImg} 1x, ${jpegImg} 2x`} // WebP를 우선 제공
+        type="image/webp"
+        alt="Sample"
+      />
+    </div>
+  );
+};
+
+export default App;
+```
+
+#### 반응형 이미지
+
+반응형 이미지는 사용자 화면 크기나 해상도에 맞춰 적절한 이미지를 제공하는 것을 말한다.
+다양한 화면 크기와 해상도에 맞춰 최적화된 이미지를 제공하여 페이지 로딩 시간과 데이터 사용량을 줄일 수 있다.
+
+`responsive-loader`를 사용하면 빌드 시 원하는 이미지 포맷,이미지 사이즈로 반응형 이미지 파일을 만들 수 있다.
+
+**반응형 이미지 방법**
+
+```jsx
+//Webpack.config.js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.responsive.(jpg|jpe?g|png|webp)$/i,
+        type: "javascript/auto",
+        use: [
+          {
+            // webp로 변경하고, size에 맞는 반응형 이미지 파일 생성
+            loader: "responsive-loader",
+            options: {
+              adapter: require("responsive-loader/sharp"),
+              format: "webp",
+              name: "[name]-[width]w.[ext]",
+              sizes: [1440, 1020, 768, 425],
+              placeholder: true,
+              placeholderSize: 20,
+              quality: 60,
+              outputPath: "static",
+            },
+          },
+        ],
+      },
+    ],
+  },
+};
+```
+
+```jsx
+//App.jsx
+import homeImage from "../../assets/images/home.responsive.png";
+
+//homeImage.srcSect: "home-1440w.webp 1440w, home-1020w.webp 1020w,...,home-425w.webp 425w"
+
+const App = () => {
+  return (
+    <picture>
+      <source
+        srcSet={homeImage.srcSet}
+        type="image/webp"
+        sizes="(max-width: 425px) 425px, (max-width: 768px) 768px,(max-width: 1024px) 1024px, (max-width: 1440px) 1440px, 100vw"
+      />
+      <img className={styles.heroImage} src={heroJpgImage} alt="Hero" />
+    </picture>
+  );
+};
+```
+
+### Lazy Loading
+
+`img`에 `loading="lazy"`를 설정하면, 화면에 보일 때 해당 이미지가 로드된다.
+즉, 화면에 보이는 이미지들만 로드되고 화면에 아직 보일 필요가 없는 이미지는 로드되지 않아 렌더링 시간이 단축된다.
+
+```html
+<img src="image.jpg" alt="Lazy Loaded Image" loading="lazy" />
+```
