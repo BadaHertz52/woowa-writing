@@ -182,7 +182,7 @@ DOM과 CSSOM을 결합하여 렌더 트리를 구성하고, 각 요소의 위치
 
 **1. 요청 리소스 크기를 줄이기**
 
-> 💡 요청 리소스 크기 줄이는 성능 최적화 방법은 [성능 최적화 파트](#optimization)에서 상세하게 다루고 있다.
+> 💡자세한 성능 최적화 방법은 ['Webpack에서 성능 최적화 하기'파트](#optimization)에서 다루고 있다.
 
 - JS 최적화: 번들 도구를 사용한 압축화 및 난독화, Code Spliting, Lazy Loading(동적 import), Tree Shaking
   <br/>
@@ -450,7 +450,7 @@ sns에서 새로운 피드를 보기 위해, 새로 고침을 했다고 가정�
 
 메모리 누수와 불필요한 객체 생성을 방지하기 위해, 이벤트 리스너나 타이머를 적절히 관리하고, 객체를 재사용하여 메모리를 효율적으로 사용할 수 있다.
 
-## <span id="optimization"> 5. Webpack에서 성능 최적화하기</span>
+## <span id="optimization"> 5. Webpack에서 성능 최적화 하기</span>
 
 ### JS 최적화
 
