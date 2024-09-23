@@ -23,7 +23,7 @@
 결국 성능 최적화를 진행하는 이유는 **'사용자에게 불편함 없는 서비스 제공해 비즈니스적 이점을 취하는 것'**에 있다.
 
 <p align="center">
-<img loading="lazy" src="./images/technicalWriting/performance_ux.png" width="300"  alt="브라우저 렌더링 과정 설명">
+<img loading="lazy" src="./images/technicalWriting/performance_ux.jpeg" width="300"  alt="브라우저 렌더링 과정 설명">
 </p>
 
 ## 2. 성능 측정
@@ -66,7 +66,7 @@
 
 - Lighthouse 성능 측정 결과
 <p align="center">
-  <img loading="lazy" src="./images/technicalWriting/light_house.png" alt="lighthouse에서 성능 측정 결과" width="600"/>
+  <img loading="lazy" src="./images/technicalWriting/light_house.jpeg" alt="lighthouse에서 성능 측정 결과" width="400"/>
 </p>
 
 #### [Page Speed Insights](https://pagespeed.web.dev/)
@@ -74,7 +74,7 @@
 실사용자 데이터를 바탕으로 웹 페이지의 속도와 성능을 분석한다. 모바일과 테스트톱 성능을 평가할 수있다.
 
 <p align="center">
-  <img loading="lazy" src="./images/technicalWriting/pageSpeed.png" alt="설명" width="600" />
+  <img loading="lazy" src="./images/technicalWriting/pageSpeed.jpeg" alt="설명" width="400" />
 </p>
 
 ### [WebPageTest](https://stratoflow.com/website-performance-metrics/)
@@ -84,7 +84,7 @@
 - webapage test에서 프랑스에서 3G 환경에서 테스트 결과
 
 <p align="center">
-  <img loading="lazy" src="./images//webpage_test.png" alt="webapage test에서 프랑스에서 3G 환경에서 테스트한 모습"  width="600"/>
+  <img loading="lazy" src="./images/technicalWriting/webpage_test.jpeg" alt="webapage test에서 프랑스에서 3G 환경에서 테스트한 모습"  width="500"/>
 </p>
 
 ### Chrome DevTools
@@ -94,7 +94,7 @@
 - 개발자도구에서 cpu,네트워크 감속해서 성능 측정한 사진
 
  <p align="center">
-    <img loading="lazy" src="./images/dev_tools_performance.png" alt="개발자도구에서 cpu,네트워크 감속해서 성능 측정한 모습" width="600">
+    <img loading="lazy" src="./images/technicalWriting/dev_tools_performance.jpeg" alt="개발자도구에서 cpu,네트워크 감속해서 성능 측정한 모습" width="600">
 </p>
 
 #### [GTmetrix](https://gtmetrix.com/)
@@ -103,7 +103,7 @@
 
 - GTmetrix 성능 측정한 모습
  <p align="center">
-    <img loading="lazy" src="./images/technicalWriting/gtmetrix.png" alt=" GTmetrix 성능 측정한 모습" width="600">
+    <img loading="lazy" src="./images/technicalWriting/gtmetrix.jpeg" alt=" GTmetrix 성능 측정한 모습" width="600">
 </p>
 
 * 측정 도구별 주요 성능 측정 지표
@@ -124,7 +124,7 @@ Webpack을 사용 중이라면, webpack-bundle-analyzer를 사용해 번들링 �
 성능 저하의 원인과 개선 방법을 이야기에 앞서, 브라우저 렌더링 과정에 대한 이해가 필요하다.
 
 <p align="center">
- <img  loading="lazy" src="./images/technicalWriting/browser_rendering.jpg" width="700" alt="브라우저 렌더링 과정 설명">
+ <img  loading="lazy" src="./images/technicalWriting/browser_rendering.jpeg"  alt="브라우저 렌더링 과정 설명">
 </p>
 
 브라우저에는 여러 엔진이 있다. 그 중 브라우저 렌더링 과정과 직간접으로 영향이 있는 엔진은 렌더링 엔지과 자바스크립트 엔진이다. 렌더링 엔진은 리소스(html, css, 이미지등)를 파싱하여 웹 페이지에 그린다. 자바스크립트 엔진은 자바스크립트 코드를 파싱하여 페이지 상호작용 및 동적 변화를 처리한다.
@@ -245,7 +245,7 @@ Lazy Loading은 모든 리소스를 한 번에 로드하지 않고 시용자가 
 - 이미지 지연 로딩
 
 ```js
-<img src="image.jpg" loading="lazy" alt="Lazy Loaded Image">
+<img src="image.jpeg" loading="lazy" alt="Lazy Loaded Image">
 
 ```
 
@@ -292,12 +292,12 @@ document.querySelectorAll("img[data-src]").forEach(img => {
 - CPU 애니메이션 사용 시 fram drop 일어난 모습
 
 <p align="center">
-  <img src="./images/technicalWriting/cpu_aniamtion.png" alt="cpu 애니메이션 frame drop" loding="lazy" />
+  <img src="./images/technicalWriting/" alt="cpu 애니메이션 frame drop" loding="lazy" />
 </p>
 
 - GPU 애니메이션을 사용해 frame drop 해결한 모습
 <p align="center">
-  <img src="./images/technicalWriting/gpu_animation.png" alt="gpu 애니메이션 frame drop" loding="lazy" />
+  <img src="./images/technicalWriting/gpu_animation.jpeg" alt="gpu 애니메이션 frame drop" loding="lazy" />
 </p>
 
 #### 리플로우, 리페인트과 리컴포지팅을 유발하는 css 속성
@@ -403,7 +403,7 @@ sns에서 새로운 피드를 보기 위해, 새로 고침을 했다고 가정�
 
 - React.memo (메모이제이션)를 사용해 재렌더링 막은 화면
   <p align="center">
-  <img src="./images/technicalWriting/memo.jpg" alt="React.memo를 사용해 재렌더링 막은 화면" loading="lazy"  width="500"/>
+  <img src="./images/technicalWriting/memo.jpeg" alt="React.memo를 사용해 재렌더링 막은 화면" loading="lazy"  width="500"/>
 </p>
 
 #### React에서의 메모이제이션
@@ -423,7 +423,7 @@ sns에서 새로운 피드를 보기 위해, 새로 고침을 했다고 가정�
 **리액트 렌더링 파이프라인**
 
 <p align="center">
-  <img src="./images/technicalWriting/react_pipeline.png" alt="리액트 렌더링 파이프라인 단계" loading="lazy"  width="500"/>
+  <img src="./images/technicalWriting/react_pipeline.jpeg" alt="리액트 렌더링 파이프라인 단계" loading="lazy"  width="500"/>
 </p>
 
 1. 렌더 단계: 상태,props 변경되면 새로운 가상 DOM을 생성하고 이를 기존 가상 DOM과 비교
@@ -438,12 +438,12 @@ sns에서 새로운 피드를 보기 위해, 새로 고침을 했다고 가정�
 
 - 디바운스 적용 전 Layout shift, Frame drop
   <p align="center">
-  <img src="./images/technicalWriting/no_debounce.png" alt="디바운스 적용 전 Layout shift, Frame drop 발생" loading="lazy" />
+  <img src="./images/technicalWriting/no_debounce.jpeg" alt="디바운스 적용 전 Layout shift, Frame drop 발생" loading="lazy" />
 </p>
 
 - 디바운스 적용 후 Layout shift, Frame drop
   <p align="center">
-  <img src="./images/technicalWriting/debounce.png" alt="디바운스 적용 후 Layout shift, Frame drop 개선" loading="lazy" />
+  <img src="./images/technicalWriting/debounce.jpeg" alt="디바운스 적용 후 Layout shift, Frame drop 개선" loading="lazy" />
 </p>
 
 ## 메모리 관리
@@ -511,7 +511,7 @@ Code splitting은 큰 애플리케이션을 작은 청크로 나누어 필요한
   동적 import를 적용하기 전에넌 모든 페이지가 합쳐진 bundle.js를 부른다면, 적용하면 페이지에 필요한 js파일만 부른다.
 
 <p align="center">
-  <img src="./images/technicalWriting/code_splitting.jpg" loading="lazy" alt="code splitting이 적용 전과 적용 후 리소스 파일 비교" width="\700" />
+  <img src="./images/technicalWriting/code_splitting.jpeg" loading="lazy" alt="code splitting이 적용 전과 적용 후 리소스 파일 비교" width="\700" />
 </p>
 
 - 코드
@@ -582,7 +582,7 @@ Accept-Encoding: gzip, deflate
 
 - CloudFront에서 Brotil로 압축해 보내 응답
 <p align="center">
-  <img src="./images/technicalWriting/refresh_cdn_cache.png" alt="CloudFront에서 Brotil로 압축해 보내 응답" loading="lazy"/>
+  <img src="./images/technicalWriting/refresh_cdn_cache.jpeg" alt="CloudFront에서 Brotil로 압축해 보내 응답" loading="lazy"/>
 </p>
 
 **Webpack을 사용한 Gzip 압축**
@@ -727,7 +727,7 @@ module.exports = {
 단, Webp를 지원하지 않은 브라우저가 있기 때문에 `picture`태그나 `img`태그와 srcSect 조합과 함께 모든 브라우저에서 사용하는 JPEG를 같이 사용하는 것을 권한다.
 
 <p align="center">
-  <img src="./images/technicalWriting/image_format.png" alt="이미지 형식 비교" />
+  <img src="./images/technicalWriting/image_format.jpeg" alt="이미지 형식 비교" />
 </p>
 
 **이미지 포맷 및 압축하기**
