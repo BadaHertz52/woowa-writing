@@ -559,9 +559,31 @@ module.exports = {
 
 #### 모듈 압축(Gzip, Brotli)
 
-Webpack 번들링 후 서버에서 전달할 때, 파일 크기를 더욱 줄이기 위해 Gzip 또는 Brotli 압축을 적용할 수 있다
+압축 방식으로는 Gzip, 구글에서 개발한 Gzip보다 압축륙이 높은 Brotli가 있다.
+모든 주요 브라우저(Chrome, Firefox, Edge, Safari등)는 Gzip과 Brotli 압축을 지원하며, 서버에서 압축된 파일을 전송하면 이를 자동으로 해제한다.
 
-CloudFront에서는 기본적으로 Gzip을 지원하고, Brotil로 압축된 경우 Brotil이 우선 적용된다.
+**CloudFront 자동 압축 활용하기**
+CloudFront 배포 설정에서 `Compress objects automatically` 옵션을 키면 압축이 활성화된다.
+압축 방식은 브라우저의 `Accept-Encoding`헤더에 따라 결정되며, Brotil가 Gzip보다 우선적으로 적용된다.
+
+- Brotil 적용되는 헤더
+
+```http
+Accept-Encoding: br, gzip, deflate
+
+```
+
+- Gzip 적용되는 헤더
+
+```http
+Accept-Encoding: gzip, deflate
+
+```
+
+- CloudFront에서 Brotil로 압축해 보내 응답
+<p align="center">
+  <img src="./images/technicalWriting/refresh_cdn_cache.png" alt="설명" loading="lazy"/>
+</p>
 
 ### CSS 최적화
 
