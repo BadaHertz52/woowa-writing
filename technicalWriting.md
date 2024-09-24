@@ -612,11 +612,14 @@ const BrotliPlugin = require("brotli-webpack-plugin");
 
 module.exports = {
   plugins: [
-    new BrotliPlugin({
-      test: /\.(js|css|html|svg)$/,
-      threshold: 8192,
-      minRatio: 0.8,
-    }),
+         new BrotliPlugin({
+        asset: '[path].br[query]', // .br 확장자 설정
+        test: /\.(js|jsx|ts|tsx|css|html|svg)$/, // 압축할 파일 유형
+        threshold: 896, // 8KB 이상의 파일만 압축
+        minRatio: 0.8, // 압축 후 80% 이하로 줄어든 파일만 압축
+        quality: 11, // 최대 압축률 (0~11 사이, 기본값: 11)
+        deleteOriginalAssets: false, // 원본 파일을 삭제하지 않음
+      }),
   ],
 };
 ```
