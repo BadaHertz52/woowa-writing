@@ -612,17 +612,24 @@ const BrotliPlugin = require("brotli-webpack-plugin");
 
 module.exports = {
   plugins: [
-         new BrotliPlugin({
-        asset: '[path].br[query]', // .br 확장자 설정
-        test: /\.(js|jsx|ts|tsx|css|html|svg)$/, // 압축할 파일 유형
-        threshold: 896, // 8KB 이상의 파일만 압축
-        minRatio: 0.8, // 압축 후 80% 이하로 줄어든 파일만 압축
-        quality: 11, // 최대 압축률 (0~11 사이, 기본값: 11)
-        deleteOriginalAssets: false, // 원본 파일을 삭제하지 않음
-      }),
+    new BrotliPlugin({
+      asset: "[path].br[query]", // .br 확장자 설정
+      test: /\.(js|jsx|ts|tsx|css|html|svg)$/, // 압축할 파일 유형
+      threshold: 896, // 8KB 이상의 파일만 압축
+      minRatio: 0.8, // 압축 후 80% 이하로 줄어든 파일만 압축
+      quality: 11, // 최대 압축률 (0~11 사이, 기본값: 11)
+      deleteOriginalAssets: false, // 원본 파일을 삭제하지 않음
+    }),
   ],
 };
 ```
+
+- Brotli 압축 결과
+  아래 사진은 우테코 6기 팀프로젝트인 '리뷰미' 프로젝에서 BrotliPlugin으로 압축한 결과이다.
+
+<p align="center">
+  <img src="./images/technicalWriting/br.jpeg" alt="리뷰미 프로젝트에서 Brotli로 압축한 결과" />
+</p>
 
 CloudFront에서 실시간으로 모듈을 압축하는 것은 S3에 압축된 파일을 올리는 것보다 속도가 느리다. 그러나 브라우저의 `Accept-Encoding`헤더에 따라 적절한 방식의 응답을 제공할 수 있어 동적 콘텐츠나 자주 변경되는 캐시를 사용하는 파일에 유리하다.
 
