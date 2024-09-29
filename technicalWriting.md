@@ -571,40 +571,24 @@ Accept-Encoding: gzip, deflate
   <img src="./images/technicalWriting/refresh_cdn_cache.jpeg" alt="CloudFront에서 Brotil로 압축해 보내 응답" loading="lazy"/>
 </p>
 
-**Webpack을 사용한 Gzip 압축**
+**Webpack을 사용한 Brotil 압축**
 
 ```js
 //Webpack.config.js
-
 const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
   plugins: [
     new CompressionPlugin({
-      algorithm: "gzip",
-      test: /\.(js|css|html|svg)$/, // 압축할 파일들
-      threshold: 8192, // 최소 파일 크기 (8KB 이상일 때 압축)
-      minRatio: 0.8, // 압축 후 원본 파일과 최소 비율
-    }),
-  ],
-};
-```
-
-**Webpack을 사용한 Brotil 압축**
-
-```js
-//Webpack.config.js
-const BrotliPlugin = require("brotli-webpack-plugin");
-
-module.exports = {
-  plugins: [
-    new BrotliPlugin({
-      asset: "[path].br[query]", // .br 확장자 설정
-      test: /\.(js|jsx|ts|tsx|css|html|svg)$/, // 압축할 파일 유형
+      filename: "[path][base].br", 
+      algorithm: "brotliCompress", // Brotli 압축 사용
+      test: /\.(js|jsx|ts|tsx|css|html|svg|ico)$/, // 압축할 파일 유형
       threshold: 8192, // 8KB 이상의 파일만 압축
       minRatio: 0.8, // 압축 후 80% 이하로 줄어든 파일만 압축
-      quality: 11, // 최대 압축률 (0~11 사이, 기본값: 11)
-      deleteOriginalAssets: false, // 원본 파일을 삭제하지 않음
+      compressionOptions: {
+        level: 11, // 압축 수준 (0~11, 기본값: 11)
+      },
+      deleteOriginalAssets: false, //Brotli 압축을 지원하지 않는 브라우저를 위해 원본 파일을 삭제하지 않음
     }),
   ],
 };
