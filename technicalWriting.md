@@ -12,8 +12,7 @@
 [구글의 연구](https://www.ascentkorea.com/core-web-vitals/)에서도 성능이 고객 유치에 얼마가 영향을 주는 지 알 수 있다. **코어 웹 바이탈**(Core Web Vitals)을 충족한 페이지는 방문자가 사이트를 떠날 확률이 24% 낮다. 모바일 기기의 경우 모바일 사이트의 53%가 로드하는데 3초 이상 걸리면 사용자는 해당 사이트를 떠났다.
 
 - 코어 웹 바이탈(Core Web Vitals)?
-  구글이 웹 콘텐츠 이용자의 사용자 경험에 영향르 미치는 다양한 값 중 중요시 여기는 3가지로,
-  LCP(Largest Contentful Pain), FID(First Input Delay), CLS(Cumulative Layout Shift)가 있다.
+  구글이 웹 콘텐츠 이용자의 사용자 경험에 영향르 미치는 다양한 값 중 중요시 여기는 가지로, LCP(Largest Contentful Pain), FID(First Input Delay), CLS(Cumulative Layout Shift)가 있다.
 
 ### SEO (검색 최적화)
 
@@ -89,7 +88,7 @@
 
 ### Chrome DevTools
 
-크롬의 개발자 도구를 사용해 개발자 도구를 통해 페이지 로딩 중 발생하는 다양한 작업의 타이밍, 리소스 크기, 캐시 여부등을 분석할 수 있다. network, performance에서 네트워크나 cpu 감속에 따른 테스트도 진행할 수 있다. 크롬에서 제공하는 다양한 성능 측정 플러그인(ex [React Developer Tools](https://chromewebstore.google.com/detail/React%20Developer%20Tools/fmkadmapgofadopljbjfkapdkoienihi), [LCP&CLS Monitor](https://chromewebstore.google.com/detail/lcp-cls-monitor/lcifpchofigigpgmhpghagcifokadjaa))을 통해 확장된 여러 성능 측정이 가능하다.
+크롬의 개발자 도구를 사용해 개발자 도구를 통해 페이지 로딩 중 발생하는 다양한 작업의 타이밍, 리소스 크기, 캐시 여부등을 분석할 수 있다. network, performance에서 네트워크나 cpu 감속에 따른 테스트도 진행할 수 있다. 크롬에서 제공하는 다양한 성능 측정 플러그인(ex: [React Developer Tools](https://chromewebstore.google.com/detail/React%20Developer%20Tools/fmkadmapgofadopljbjfkapdkoienihi), [LCP&CLS Monitor](https://chromewebstore.google.com/detail/lcp-cls-monitor/lcifpchofigigpgmhpghagcifokadjaa))을 통해 확장된 여러 성능 측정이 가능하다.
 
 - 개발자도구에서 CPU와 네트워크의 성능을 낮춰서 성능을 측정한 사진
 
@@ -550,9 +549,9 @@ module.exports = {
 
 **CloudFront 자동 압축 활용하기**
 CloudFront 배포 설정에서 `Compress objects automatically` 옵션을 키면 압축이 활성화된다.
-압축 방식은 브라우저의 `Accept-Encoding`헤더에 따라 결정되며, Brotil가 Gzip보다 우선적으로 적용된다.
+압축 방식은 브라우저의 `Accept-Encoding`헤더에 따라 결정되며, Brotli가 Gzip보다 우선적으로 적용된다.
 
-- Brotil 적용되는 헤더
+- Brotli 적용되는 헤더
 
 ```http
 Accept-Encoding: br, gzip, deflate
@@ -566,12 +565,12 @@ Accept-Encoding: gzip, deflate
 
 ```
 
-- CloudFront에서 Brotil로 압축해 보내 응답
+- CloudFront에서 Brotli로 압축해 보내 응답
 <p align="center">
-  <img src="./images/technicalWriting/refresh_cdn_cache.jpeg" alt="CloudFront에서 Brotil로 압축해 보내 응답" loading="lazy"/>
+  <img src="./images/technicalWriting/refresh_cdn_cache.jpeg" alt="CloudFront에서 Brotli로 압축해 보내 응답" loading="lazy"/>
 </p>
 
-**Webpack을 사용한 Brotil 압축**
+**Webpack을 사용한 Brotli 압축**
 
 ```js
 //Webpack.config.js
@@ -580,7 +579,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 module.exports = {
   plugins: [
     new CompressionPlugin({
-      filename: "[path][base].br", 
+      filename: "[path][base].br",
       algorithm: "brotliCompress", // Brotli 압축 사용
       test: /\.(js|jsx|ts|tsx|css|html|svg|ico)$/, // 압축할 파일 유형
       threshold: 8192, // 8KB 이상의 파일만 압축
@@ -696,8 +695,8 @@ module.exports = {
 | **PNG**     | 큼        | - 무손실 압축 <br> - 투명도 지원                                                | - 파일 크기가 큼 <br> - 손실 압축 미지원                        | 모든 브라우저 및 기기에서 지원                          |
 | **GIF**     | 중간~큼   | - 애니메이션 지원 <br> - 간단한 이미지에 적합                                   | - 색상 제한(256색) <br> - 큰 파일 크기                          | 모든 브라우저 및 기기에서 지원                          |
 
-이미지 파일 크기는 `AVIF < WebP < JPEG < PNG`순으로 크다. AVIF는 이미지 파일 크기가 가장 작지만,아직 지원하는 브라우저와 툴이 제한적이다. 그래서 무손실 압축이며 gif도 지원하고 대부분의 최신 브라우저가 지원하는 Webp가 좋은 대안이다.
-단, Webp를 지원하지 않은 브라우저가 있기 때문에 `picture`태그나 `img`태그와 srcSect 조합과 함께 모든 브라우저에서 사용하는 JPEG를 같이 사용하는 것을 권한다.
+이미지 파일 크기는 `AVIF < WebP < JPEG < PNG`순으로 크다. AVIF는 이미지 파일 크기가 가장 작지만,아직 지원하는 브라우저와 툴이 제한적이다. 그래서 무손실 압축이며 gif도 지원하고 대부분의 최신 브라우저가 지원하는 WebP가 좋은 대안이다.
+단, WebP를 지원하지 않은 브라우저가 있기 때문에 `picture`태그나 `img`태그와 srcSect 조합과 함께 모든 브라우저에서 사용하는 JPEG를 같이 사용하는 것을 권한다.
 
 <p align="center">
   <img src="./images/technicalWriting/image_format.jpeg" alt="이미지 형식 비교" />
