@@ -12,7 +12,7 @@
 [구글의 연구](https://www.ascentkorea.com/core-web-vitals/)에서도 성능이 고객 유치에 얼마가 영향을 주는 지 알 수 있다. **코어 웹 바이탈**(Core Web Vitals)을 충족한 페이지는 방문자가 사이트를 떠날 확률이 24% 낮다. 모바일 기기의 경우 모바일 사이트의 53%가 로드하는데 3초 이상 걸리면 사용자는 해당 사이트를 떠났다.
 
 - 코어 웹 바이탈(Core Web Vitals)?
-  구글이 웹 콘텐츠 이용자의 사용자 경험에 영향르 미치는 다양한 값 중 중요시 여기는 가지로, LCP (Largest Contentful Paint), FID(First Input Delay), CLS(Cumulative Layout Shift)가 있다.
+  구글이 웹 콘텐츠 이용자의 사용자 경험에 영향을 미치는 다양한 값 중 중요시 여기는 가지로, LCP (Largest Contentful Paint), FID(First Input Delay), CLS(Cumulative Layout Shift)가 있다.
 
 ### SEO (검색 최적화)
 
@@ -291,7 +291,7 @@ document.querySelectorAll("img[data-src]").forEach(img => {
 - CPU 애니메이션 사용 시 Frame drop 일어난 모습
 
 <p align="center">
-  <img src="./images/technicalWriting/" alt="cpu 애니메이션 frame drop" loading="lazy" />
+  <img src="./images/technicalWriting/cpu_animation.jpeg" alt="cpu 애니메이션 frame drop" loading="lazy" />
 </p>
 
 - GPU 애니메이션을 사용해 Frame drop 해결한 모습
