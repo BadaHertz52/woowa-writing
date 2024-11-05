@@ -12,12 +12,12 @@
 [구글의 연구](https://www.ascentkorea.com/core-web-vitals/)에서도 성능이 고객 유치에 얼마가 영향을 주는 지 알 수 있다. **코어 웹 바이탈**(Core Web Vitals)을 충족한 페이지는 방문자가 사이트를 떠날 확률이 24% 낮다. 모바일 기기의 경우 모바일 사이트의 53%가 로드하는데 3초 이상 걸리면 사용자는 해당 사이트를 떠났다.
 
 - 코어 웹 바이탈(Core Web Vitals)?
-  구글이 웹 콘텐츠 이용자의 사용자 경험에 영향르 미치는 다양한 값 중 중요시 여기는 가지로, LCP(Largest Contentful Pain), FID(First Input Delay), CLS(Cumulative Layout Shift)가 있다.
+  구글이 웹 콘텐츠 이용자의 사용자 경험에 영향르 미치는 다양한 값 중 중요시 여기는 가지로, LCP (Largest Contentful Paint), FID(First Input Delay), CLS(Cumulative Layout Shift)가 있다.
 
 ### SEO (검색 최적화)
 
 성능은 UX뿐만아니라 검색 엔진의 순위에도 영향을 준다.
-2010년 구글은 사이트 속도가 검색 순위에 반영된다고 [발표](https://developers.google.com/search/blog/2010/04/using-site-speed-in-web-search-ranking)했다. 발표 이후 색 순위에서의 사이트 속도의 중요도는 점점 커졌다.
+2010년 구글은 사이트 속도가 검색 순위에 반영된다고 [발표](https://developers.google.com/search/blog/2010/04/using-site-speed-in-web-search-ranking)했다. 발표 이후 검색 순위에서의 사이트 속도의 중요도는 점점 커졌다.
 
 결국 성능 최적화를 진행하는 이유는 **'사용자에게 불편함 없는 서비스 제공해 비즈니스적 이점을 취하는 것'**에 있다.
 
@@ -61,16 +61,16 @@
 
 #### [Goggle Lighthouse](https://pagespeed.web.dev/)
 
-웹 페이지의 종합적인 성능을 평가한다. 접근성, SEO, PWA 성능까지 측정 가능 및 성능 최적화 방법도 제시한다. 모바일과 테스트톱 성능을 평가할 수 있다.
+웹 페이지의 종합적인 성능을 평가한다. 접근성, SEO, PWA 성능까지 측정 가능 및 성능 최적화 방법도 제시한다. 모바일과 데스크탑 성능을 평가할 수 있다.
 
 - Lighthouse 성능 측정 결과
 <p align="center">
   <img loading="lazy" src="./images/technicalWriting/light_house.jpeg" alt="lighthouse에서 성능 측정 결과" width="400"/>
 </p>
 
-#### [Page Speed Insights](https://pagespeed.web.dev/)
+#### [PageSpeed Insights](https://pagespeed.web.dev/)
 
-실사용자 데이터를 바탕으로 웹 페이지의 속도와 성능을 분석한다. 모바일과 테스트톱 성능을 평가할 수 있다.
+실사용자 데이터를 바탕으로 웹 페이지의 속도와 성능을 분석한다. 모바일과 데스크탑 성능을 평가할 수 있다.
 
 <p align="center">
   <img loading="lazy" src="./images/technicalWriting/pageSpeed.jpeg" alt="설명" width="400" />
@@ -80,7 +80,7 @@
 
 다양한 국가, 브라우저, 기기에서 테스트 가능해 다양한 환경에서 성능을 테스트할 수 있다. 또한 세부적인 성능 병목을 분석하는 데 유용하다.
 
-- WebapageTest에서 프랑스에서 3G 환경에서 테스트 결과
+- WebPageTest에서 프랑스 3G 환경에서 테스트한 결과
 
 <p align="center">
   <img loading="lazy" src="./images/technicalWriting/webpage_test.jpeg" alt="WebapageTest에서 프랑스에서 3G 환경에서 테스트한 모습"  width="500"/>
@@ -147,7 +147,7 @@ DOM과 CSSOM을 결합하여 렌더 트리를 구성하고, 각 요소의 위치
 이전 단계에서 만든 여러 레이어를 결합나다.
 
 **5. 화면에 표시**
-컴포지팅 단계에서 끝낸 결과물은 GPU 프로세스가 화면에 그린다.
+컴포지팅 단계에서 끝낸 결과물은 GPU 프로세서가 화면에 그린다.
 
 #### 리플로우,리페인팅,리컴포지팅
 
@@ -291,12 +291,12 @@ document.querySelectorAll("img[data-src]").forEach(img => {
 - CPU 애니메이션 사용 시 Frame drop 일어난 모습
 
 <p align="center">
-  <img src="./images/technicalWriting/" alt="cpu 애니메이션 frame drop" loding="lazy" />
+  <img src="./images/technicalWriting/" alt="cpu 애니메이션 frame drop" loading="lazy" />
 </p>
 
 - GPU 애니메이션을 사용해 Frame drop 해결한 모습
 <p align="center">
-  <img src="./images/technicalWriting/gpu_animation.jpeg" alt="gpu 애니메이션 frame drop" loding="lazy" />
+  <img src="./images/technicalWriting/gpu_animation.jpeg" alt="gpu 애니메이션 frame drop" loading="lazy" />
 </p>
 
 #### 리플로우, 리페인트과 리컴포지팅을 유발하는 css 속성
@@ -528,7 +528,7 @@ const App = () => {
 };
 ```
 
-**spliceChunks 옵션 사용**
+**splitChunks 옵션 사용**
 
 ```js
 //Webpack.config.js
@@ -695,7 +695,7 @@ module.exports = {
 | **PNG**     | 큼        | - 무손실 압축 <br> - 투명도 지원                                                | - 파일 크기가 큼 <br> - 손실 압축 미지원                        | 모든 브라우저 및 기기에서 지원                          |
 | **GIF**     | 중간~큼   | - 애니메이션 지원 <br> - 간단한 이미지에 적합                                   | - 색상 제한(256색) <br> - 큰 파일 크기                          | 모든 브라우저 및 기기에서 지원                          |
 
-이미지 파일 크기는 `AVIF < WebP < JPEG < PNG`순으로 크다. AVIF는 이미지 파일 크기가 가장 작지만,아직 지원하는 브라우저와 툴이 제한적이다. 그래서 무손실 압축이며 gif도 지원하고 대부분의 최신 브라우저가 지원하는 WebP가 좋은 대안이다.
+이미지 파일 크기는 `AVIF < WebP < JPEG < PNG`순으로 크다. AVIF는 이미지 파일 크기가 가장 작지만,아직 지원하는 브라우저와 툴이 제한적이다. 그래서 무손실 압축이며 GIF도 지원하고 대부분의 최신 브라우저가 지원하는 WebP가 좋은 대안이다.
 단, WebP를 지원하지 않은 브라우저가 있기 때문에 `picture`태그나 `img`태그와 srcSect 조합과 함께 모든 브라우저에서 사용하는 JPEG를 같이 사용하는 것을 권한다.
 
 <p align="center">
