@@ -1,13 +1,15 @@
 # 성능 최적화
 
+'우아한테크코스' 레벨4의 프론트엔드 미션과 ['리뷰미'](https://review-me.page/) 프로젝트에서 성능 최적화를 진행하며 공부한 내용을 정리한 글이다. 이 글은 성능 최적화의 필요성과 Webpack과 React 환경에서의 구체적인 성능 최적화 방법에 관심이 있는 독자를 위해 작성되었다.
+
 ## 1. 성능 최적화 필요성
 
 ### UX와 고객 유치
 
 성능을 개선하는 것은 고객 유치와 유지에 밀접한 관계가 있다. 사이트 속도가 빨라지면 운영 비용이 감소하고, 사용자 경험(UX)이 개선된다. 성능 개선 사례로 Tokopedia와 Pinterest의 성공적인 최적화 결과를 들 수 있다.
 
-- **[Tokopedia](https://wpostats.com/2018/05/30/tokopedia-new-users.html)**: 3G 연결에서 렌더링 시간을 14초에서 2초로 줄여 방문자 19% 증가
-- **[Pinterest](https://wpostats.com/2017/03/10/pinterest-seo.html)**: 페이지 성능을 개선해 대기 시간을 40% 줄이고 SEO 트래픽과 전환율이 각각 15% 증가
+- **[Tokopedia](https://wpostats.com/2018/05/30/tokopedia-new-users.html)** : 3G 연결에서 렌더링 시간을 14초에서 2초로 줄여 방문자 19% 증가
+- **[Pinterest](https://wpostats.com/2017/03/10/pinterest-seo.html)** : 페이지 성능을 개선해 대기 시간을 40% 줄이고 SEO 트래픽과 전환율이 각각 15% 증가
 
 [구글의 연구](https://www.ascentkorea.com/core-web-vitals/)에서도 성능이 고객 유치에 얼마가 영향을 주는 지 알 수 있다. **코어 웹 바이탈**(Core Web Vitals)을 충족한 페이지는 방문자가 사이트를 떠날 확률이 24% 낮다. 모바일 기기의 경우 모바일 사이트의 53%가 로드하는데 3초 이상 걸리면 사용자는 해당 사이트를 떠났다.
 
@@ -19,7 +21,7 @@
 성능은 UX뿐만아니라 검색 엔진의 순위에도 영향을 준다.
 2010년 구글은 사이트 속도가 검색 순위에 반영된다고 [발표](https://developers.google.com/search/blog/2010/04/using-site-speed-in-web-search-ranking)했다. 발표 이후 검색 순위에서의 사이트 속도의 중요도는 점점 커졌다.
 
-결국 성능 최적화를 진행하는 이유는 **'사용자에게 불편함 없는 서비스 제공해 비즈니스적 이점을 취하는 것'**에 있다.
+결국 성능 최적화를 진행하는 이유는 '**사용자에게 불편함 없는 서비스 제공해 비즈니스적 이점을 취하는 것**'에 있다.
 
 <p align="center">
 <img loading="lazy" src="./images/technicalWriting/performance_ux.jpeg" width="300"  alt="브라우저 렌더링 과정 설명">
@@ -32,10 +34,10 @@
 성능 최적화의 목표가 UX 증대인 것처럼, [성능 측정 항목](https://web.dev/articles/user-centric-performance-metrics?hl=ko)도 사용자가 실직적으로 서비스를 사용하는 방식과 밀접한 관련이 있다.
 
 - **인식된 로드 속도** : 페이지가 로드되고 모든 시각적 요소를 화면에 렌더링할 수 있는 속도
-- **로드 응답성**: 구성요소가 사용자 상호작용에 빠르게 응답하기 위해 페이지가 필요한 자바스크립트 코드를 로드하고 실행할 수 있는 속도
-- **런타임 응답성**: 페이지 로드 후 페이지가 사용자 상호작용에 얼마나 빠르게 반응할 수 있는지
-- **시각적 안정성**: 페이지 요소가 사용자가 예상하지 못한 방식으로 전환되어 상호작용을 방해하는지
-- **부드러움**: 전환 및 애니메이션이 일관된 프레임 속도로 렌더링되고 한 상태에서 다음 상태로 부드럽게 이어지는지
+- **로드 응답성** : 구성요소가 사용자 상호작용에 빠르게 응답하기 위해 페이지가 필요한 자바스크립트 코드를 로드하고 실행할 수 있는 속도
+- **런타임 응답성** : 페이지 로드 후 페이지가 사용자 상호작용에 얼마나 빠르게 반응할 수 있는지
+- **시각적 안정성** : 페이지 요소가 사용자가 예상하지 못한 방식으로 전환되어 상호작용을 방해하는지
+- **부드러움** : 전환 및 애니메이션이 일관된 프레임 속도로 렌더링되고 한 상태에서 다음 상태로 부드럽게 이어지는지
 
 ### 측정 지표
 
@@ -88,9 +90,9 @@
 
 ### Chrome DevTools
 
-크롬의 개발자 도구를 사용해 개발자 도구를 통해 페이지 로딩 중 발생하는 다양한 작업의 타이밍, 리소스 크기, 캐시 여부등을 분석할 수 있다. network, performance에서 네트워크나 cpu 감속에 따른 테스트도 진행할 수 있다. 크롬에서 제공하는 다양한 성능 측정 플러그인(ex: [React Developer Tools](https://chromewebstore.google.com/detail/React%20Developer%20Tools/fmkadmapgofadopljbjfkapdkoienihi), [LCP&CLS Monitor](https://chromewebstore.google.com/detail/lcp-cls-monitor/lcifpchofigigpgmhpghagcifokadjaa))을 통해 확장된 여러 성능 측정이 가능하다.
+크롬의 개발자 도구를 사용해 개발자 도구를 통해 페이지 로딩 중 발생하는 다양한 작업의 타이밍, 리소스 크기, 캐시 여부등을 분석할 수 있다. Network, Performance에서 네트워크나 CPU 감속에 따른 테스트도 진행할 수 있다. 크롬에서 제공하는 다양한 성능 측정 플러그인(ex : [React Developer Tools](https://chromewebstore.google.com/detail/React%20Developer%20Tools/fmkadmapgofadopljbjfkapdkoienihi), [LCP&CLS Monitor](https://chromewebstore.google.com/detail/lcp-cls-monitor/lcifpchofigigpgmhpghagcifokadjaa))을 통해 확장된 여러 성능 측정이 가능하다.
 
-- 개발자도구에서 CPU와 네트워크의 성능을 낮춰서 성능을 측정한 사진
+- 개발자도구에서 CPU와 네트워크의 성능을 낮춰서 성능을 측정한 모습
 
  <p align="center">
     <img loading="lazy" src="./images/technicalWriting/dev_tools_performance.jpeg" alt="개발자도구에서 cpu,네트워크 감속해서 성능 측정한 모습" width="600">
@@ -126,7 +128,7 @@ Webpack을 사용 중이라면, webpack-bundle-analyzer를 사용해 번들링 �
  <img  loading="lazy" src="./images/technicalWriting/browser_rendering.jpeg"  alt="브라우저 렌더링 과정 설명">
 </p>
 
-브라우저에는 여러 엔진이 있다. 그 중 브라우저 렌더링 과정과 직간접으로 영향이 있는 엔진은 렌더링 엔진과 자바스크립트 엔진이다. 렌더링 엔진은 리소스(html, css, 이미지등)를 파싱하여 웹 페이지에 그린다. 자바스크립트 엔진은 자바스크립트 코드를 파싱하여 페이지 상호작용 및 동적 변화를 처리한다.
+브라우저에는 여러 엔진이 있다. 그 중 브라우저 렌더링 과정과 직간접으로 영향이 있는 엔진은 렌더링 엔진과 자바스크립트 엔진이다. 렌더링 엔진은 리소스(HTML, CSS, 이미지등)를 파싱하여 웹 페이지에 그린다. 자바스크립트 엔진은 자바스크립트 코드를 파싱하여 페이지 상호작용 및 동적 변화를 처리한다.
 
 렌더링 엔진에서 일어나는 브라우저 렌더링 과정은 다음과 같다.
 
@@ -157,7 +159,7 @@ DOM과 CSSOM을 결합하여 렌더 트리를 구성하고, 각 요소의 위치
   <br/>
 - 리컴포지팅 : 레이어가 변경되거나 애니메이션을 처리할 때 레이어를 GPU가 결합하는 과정
 
-#### 자바스크립트에 의한 DOM,CSSOM 변경
+#### 자바스크립트에 의한 DOM, CSSOM 변경
 
 자바스크립트의 파싱 작업이 실행되는 시점은 자바스크립트를 실행하는 코드에 따라 다르다.
 
@@ -167,7 +169,7 @@ DOM과 CSSOM을 결합하여 렌더 트리를 구성하고, 각 요소의 위치
 
 `script`에 `async`를 사용했다면 HTML 파싱 작업에서 해당 태그를 만나면 자바스크립트 파일을 로드하다가 로드가 끝나면 HTML 파싱 작업을 중단하고 자바스크립트 파싱작업을 실행한다.
 
-이렇게 **파싱된 자바스크립트 코드에 DOM,CSSOM에 변경을 주는 코드가 있다면, 리플로우와 리페인팅이 발생**한다.
+이렇게 **파싱된 자바스크립트 코드에 DOM, CSSOM에 변경을 주는 코드가 있다면, 리플로우와 리페인팅이 발생**한다.
 
 ## 4. 성능 저하 원인 및 해결 방법
 
@@ -183,13 +185,13 @@ DOM과 CSSOM을 결합하여 렌더 트리를 구성하고, 각 요소의 위치
 
 > 💡자세한 성능 최적화 방법은 ['Webpack에서 성능 최적화 하기'파트](#optimization)에서 다루고 있다.
 
-- JS 최적화: 번들 도구를 사용한 압축화 및 난독화, Code Spliting, Lazy Loading(동적 import), Tree Shaking
+- JS 최적화 : 번들 도구를 사용한 압축화 및 난독화, Code Spliting, Lazy Loading(동적 import), Tree Shaking
   <br/>
 - CSS 최적화 : 번들 도구를 사용한 압축화 및 불필요한 코드 삭제
   <br/>
 - 이미지 최적화 : 이미지 포맷, 반응형 이미지, 이미지 압축
   <br/>
-- 폰트 최적화: 필요한 폰트만 로드,WOFF2,Font Display ,서브셋 사용
+- 폰트 최적화 : 필요한 폰트만 로드,WOFF2,Font Display ,서브셋 사용
 
 **2. 필요한 리소스 미리 요청하기**
 `preconnect`, `preload`, `prefetch`, `prerender`등을 사용해 필요한 리소스를 미리 요청힐 수 있도록 한다.
@@ -215,7 +217,7 @@ CDN 캐시와 API 요청에 대한 브라우저 캐시를 사용하면 origin �
 
 여기에 Suspense를 적용할 수 있다. 데이터 요청 중에는 Suspense가 실행되다가 데이터 요청이 만료되면 해당 부분만 업데이트만 되어, FCP나 FMP가 빨라진다.
 
-- 비동기 처리 및 Suspense
+- 비동기 처리 및 Suspense 예시 코드
 
 ```js
 // App.jsx
@@ -241,14 +243,14 @@ Lazy Loading은 모든 리소스를 한 번에 로드하지 않고 시용자가 
 
 이미지 지연 로딩, React.lazy, 옵저버를 사용한 방법등을 통해 Lazy Loading를 구현할 수 있다.
 
-- 이미지 지연 로딩
+- 이미지 지연 로딩 예시 코드
 
 ```js
 <img src="image.jpeg" loading="lazy" alt="Lazy Loaded Image">
 
 ```
 
-- React.lazy로 특정 컴포넌트가 필요할 때 로드
+- React.lazy로 특정 컴포넌트가 필요할 때 로드하는 예시 코드
 
 ```js
 const LazyComponent = React.lazy(() => import("./MyComponent"));
@@ -262,7 +264,7 @@ function App() {
 }
 ```
 
-- 옵저버를 사용해 뷰포트에 옵저버 관찰 대상이 들어 올 때 이미지 로드
+- 옵저버를 사용해 뷰포트에 옵저버 관찰 대상이 들어 올 때 이미지 로드 예시 코드
 
 ```js
 const imgObserver = new IntersectionObserver((entries, observer) => {
@@ -291,12 +293,12 @@ document.querySelectorAll("img[data-src]").forEach(img => {
 - CPU 애니메이션 사용 시 Frame drop 일어난 모습
 
 <p align="center">
-  <img src="./images/technicalWriting/cpu_animation.jpeg" alt="cpu 애니메이션 frame drop" loading="lazy" />
+  <img src="./images/technicalWriting/cpu_animation.jpeg" alt="CPU 애니메이션 frame drop" loading="lazy" />
 </p>
 
 - GPU 애니메이션을 사용해 Frame drop 해결한 모습
 <p align="center">
-  <img src="./images/technicalWriting/gpu_animation.jpeg" alt="gpu 애니메이션 frame drop" loading="lazy" />
+  <img src="./images/technicalWriting/gpu_animation.jpeg" alt="GPU 애니메이션 frame drop" loading="lazy" />
 </p>
 
 #### 리플로우, 리페인트과 리컴포지팅을 유발하는 css 속성
@@ -319,7 +321,7 @@ CPU가 범용 처리 장치인 반면에 GPU는 그래픽 렌더링과 관련된
 
 **3. 리소스 분배 및 병목 현상 방지**
 
-GPU를 사용하면 CPU와 GPU 간의 작업 분할이 이루어지기 때문에, CPU가 다른 작업(ex: 자바스크립트 실행, 이벤트 처리)에 집중할 수 있다. 이는 병목 현상을 방지하고 전체적인 시스템 성능을 향상시킨다. 가령 CPU가 레이아웃 계산을 하는 동안 GPU는 컴포지팅 작업을 처리해 더 빠른 렌더링이 가능하다.
+GPU를 사용하면 CPU와 GPU 간의 작업 분할이 이루어지기 때문에, CPU가 다른 작업(ex : 자바스크립트 실행, 이벤트 처리)에 집중할 수 있다. 이는 병목 현상을 방지하고 전체적인 시스템 성능을 향상시킨다. 가령 CPU가 레이아웃 계산을 하는 동안 GPU는 컴포지팅 작업을 처리해 더 빠른 렌더링이 가능하다.
 
 **4. 애니메이션과 인터랙션에서의 부드러움**
 
@@ -394,7 +396,7 @@ sns에서 새로운 피드를 보기 위해, 새로 고침을 했다고 가정�
 이를 위해서 메모이제이션을 사용할 수 있다.
 메모이제이션은 이전에 계산한 결과를 캐시해두고, 동일한 입력값이 호출되면 캐시된 값을 반환하는 방법이다.
 
-- React.memo (메모이제이션)를 사용해 재렌더링 막은 화면
+- React.memo (메모이제이션)를 사용해 재렌더링 막은 후 React Developer Tools Profiler 실행 모습
   <p align="center">
   <img src="./images/technicalWriting/memo.jpeg" alt="React.memo를 사용해 재렌더링 막은 화면" loading="lazy"  width="500"/>
 </p>
@@ -427,12 +429,12 @@ sns에서 새로운 피드를 보기 위해, 새로 고침을 했다고 가정�
 
 너무 많은 자바스크립트가 메인 스레드를 차지하면 사용자 인터랙션이 지연될 수 있다. 비동기 처리를 통해 **메인 스레드 블로킹** 문제를 해결하고, `debounce`나 `throttle`을 사용해 이벤트 핸들러를 최적화할 수 있다.
 
-- 디바운스 적용 전 Layout shift, Frame drop
+- 디바운스 적용 전 Layout shift, Frame drop 측정 결과
   <p align="center">
   <img src="./images/technicalWriting/no_debounce.jpeg" alt="디바운스 적용 전 Layout shift, Frame drop 발생" loading="lazy" />
 </p>
 
-- 디바운스 적용 후 Layout shift, Frame drop
+- 디바운스 적용 후 Layout shift, Frame drop 측정 결과
   <p align="center">
   <img src="./images/technicalWriting/debounce.jpeg" alt="디바운스 적용 후 Layout shift, Frame drop 개선" loading="lazy" />
 </p>
@@ -445,6 +447,8 @@ sns에서 새로운 피드를 보기 위해, 새로 고침을 했다고 가정�
 
 Webpack 5는 기본적으로 TerserPlugin을 사용하여 자바스크립트 파일을 압축한다. 추가적인 설정이 필요 없다면 `mode: 'production'`으로 설정하면 자동으로 압축이 적용된다.
 
+- Webpack production 설정 코드
+
 ```js
 // webpack.config.js
 module.exports = {
@@ -455,6 +459,8 @@ module.exports = {
 #### 난독화
 
 난독화는 코드의 가독성을 낮추어 악의적인 사용자가 코드를 분석하거나 도용하는 것을 방지하기 위한 기법입니다. 난독화 과정에서 변수 이름이 짧아지기 때문에 번들 크기를 줄이는데 기여한다. Webpack 5에서 기본적으로 제공하는 TerserPlugin을 사용하여 난독화를 진행 할 수 있다.
+
+- TerserPlugin을 사용한 난독화 코드
 
 ```js
 // webpack.config.js
@@ -530,6 +536,8 @@ const App = () => {
 
 **splitChunks 옵션 사용**
 
+- splitChunks 설정 코드
+
 ```js
 //Webpack.config.js
 module.exports = {
@@ -555,14 +563,12 @@ CloudFront 배포 설정에서 `Compress objects automatically` 옵션을 키면
 
 ```http
 Accept-Encoding: br, gzip, deflate
-
 ```
 
 - Gzip 적용되는 헤더
 
 ```http
 Accept-Encoding: gzip, deflate
-
 ```
 
 - CloudFront에서 Brotli로 압축해 보내 응답
@@ -571,6 +577,8 @@ Accept-Encoding: gzip, deflate
 </p>
 
 **Webpack을 사용한 Brotli 압축**
+
+- Brotli 압축 설정 코드
 
 ```js
 //Webpack.config.js
@@ -611,6 +619,8 @@ Webpack에서 style-loader를 사용하면 CSS는 JS가 번들링된 bundle.js�
 
 CSS 파일을 bundle.js에 포함하면, JS파일이 조금만 변경되어도 전체 bundle.js가 다시 다운로드된다. 반면 CSS 파일을 따로 추출하면 CSS나 JS 중 하나가 변경되어도 각각의 파일만 새로 캐싱하여 다운로드할 수 있다. 이는 캐싱 효율성을 높여 성능 개선에도 도움이 된다.
 
+- CSS와 JS 함께 있을 때와 분리되었을 때 비교
+
 | 비교 항목                        | CSS가 JS와 함께 있을 때 (bundle.js)                       | CSS가 별도로 있을 때                                  |
 | -------------------------------- | --------------------------------------------------------- | ----------------------------------------------------- |
 | **로딩 방식**                    | JS와 함께 다운로드되며, JS 파싱이 끝날 때까지 렌더링 지연 | CSS와 JS가 병렬로 다운로드되어 빠른 렌더링 가능       |
@@ -621,7 +631,7 @@ CSS 파일을 bundle.js에 포함하면, JS파일이 조금만 변경되어도 �
 | **성능 측정 지표 (LCP, TTI 등)** | LCP 및 TTI 저하 가능성 있음                               | LCP 및 TTI 개선 가능                                  |
 | **렌더링 속도**                  | 느림                                                      | 빠름                                                  |
 
-** 별도 추출 방법**
+**별도 추출 방법**
 `MiniCssExtractPlugin`을 사용하여 CSS를 별도의 파일로 추출할 수 있다.
 
 ```js
@@ -687,6 +697,8 @@ module.exports = {
 **변경할 이미지 포맷 선정하기**
 이미지 포맷 중 파일 크기가 작은 포맷들은 WebP, AVIF, 그리고 JPEG이다.
 
+- 이미지 포맷 별 비교
+
 | 이미지 포맷 | 파일 크기 | 장점                                                                            | 단점                                                            | 지원 수준                                               |
 | ----------- | --------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------- |
 | **AVIF**    | 가장 작음 | - 매우 높은 압축률로 파일 크기 작음 <br> - 고품질 이미지 유지 <br> - HDR 지원   | - 인코딩 속도가 느림 <br> - 지원 브라우저 및 도구가 아직 제한적 | 최신 브라우저 일부 (Chrome, Firefox 등)                 |
@@ -707,9 +719,15 @@ module.exports = {
 
 압축률은 `quality`옵션을 통해 결정된다. 압축률이 커질 수록 이미지 파일 크기는 줄지만 그 만큼 이미지의 해상도는 낮아지기 때문에, 무작정 높은 압축률은 피해야한다. 이미지 파일의 쓰임에 따라 그에 맞는 압축률을 선정해야한다.
 
-- 디테일이 중요한 이미지 : 80~85
-- 단순한 색상과 선으로 구성된 이미지 : 75~80
-- 일반적으로 많이 사용되는 압축률 : 75-85
+- 상황 별 압축률
+
+| 상황                               | 압축률(%) |
+| ---------------------------------- | --------- |
+| 디테일이 중요한 이미지             | 80~85     |
+| 단순한 색상과 선으로 구성된 이미지 | 75~80     |
+| 일반적으로 많이 사용되는 압축률    | 75-85     |
+
+- 이미지 포맷 및 압축 설정 코드
 
 ```js
 //Webpack.config.js
@@ -722,7 +740,7 @@ module.exports = {
       new ImageMinimizerPlugin({
         generator: [
           {
-            //'?as=webp'를 넣어서, 해당 파일을 webp로 변경
+            // webp 포맷으로 변경할 이미지를 사용할 때, '?as=webp'를 넣어서 해당 파일을 webp로 변경 (자세한 사용예시는 'picture 태그 사용 예시'를 참고)
             preset: "webp",
             implementation: ImageMinimizerPlugin.sharpGenerate,
             options: {
@@ -734,7 +752,7 @@ module.exports = {
             },
           },
           {
-            //'?as=jpeg'를 넣어서, 해당 파일을 jpeg로 변경
+            //jpeg 포맷으로 변경할 이미지를 사용할 때, '?as=jpeg'를 넣어서 해당 파일을 jpeg로 변경
             preset: "jpeg",
             implementation: ImageMinimizerPlugin.sharpGenerate,
             options: {
@@ -815,6 +833,8 @@ export default App;
 
 **반응형 이미지 방법**
 
+- responsive-loader를 사용해 반응형 이미지 파일 생성 코드
+
 ```jsx
 //Webpack.config.js
 module.exports = {
@@ -845,6 +865,8 @@ module.exports = {
 };
 ```
 
+- responsive-loader로 만든 반응형 이미지를 사용하는 코드
+
 ```jsx
 //App.jsx
 import homeImage from "../../assets/images/home.responsive.png";
@@ -873,3 +895,9 @@ const App = () => {
 ```html
 <img src="image.jpg" alt="Lazy Loaded Image" loading="lazy" />
 ```
+
+# 6. 마무리
+
+'리뷰미' 프로젝트에서 성능 최적화를 진행하며, 각 작업이 성능 지표에 긍정적인 영향을 미치는 것을 확인할 수 있었다. 하지만 작업을 하나씩 추가하는 과정에서는 사용자 경험이 얼마나 개선될지 직접적으로 와닿지 않았다. 주요 기능에 대한 최적화가 마무리되었을 때, dev 페이지와 production 페이지 간의 로딩 속도 차이가 확연히 느껴졌다.
+
+디바이스와 네트워크 성능이 점차 발전하고 있지만, 모든 사용자가 항상 좋은 환경에서 웹을 사용하는 것은 아니다. 개발자는 기능을 구현할 때, 다양한 사용자 환경을 고려하여 최적화된 경험을 제공해야 한다. 성능 최적화는 사용자에게 빠르고 쾌적한 웹 경험을 선사하기 위한 필수적인 과정이며, 이를 위해 지속적인 노력이 필요하다고 생각한다.
